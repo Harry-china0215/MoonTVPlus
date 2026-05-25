@@ -15,6 +15,15 @@ const SPECTRUM_REFERENCE_VOLUME = 10;
 const SPECTRUM_MIN_VOLUME = 5;
 const SPECTRUM_MAX_REFERENCE_VOLUME = 15;
 
+function getApiErrorMessage(error: unknown, fallback: string): string {
+  if (typeof error === 'string') return error;
+  if (error && typeof error === 'object' && 'message' in error) {
+    const message = (error as { message?: unknown }).message;
+    if (typeof message === 'string' && message.trim()) return message;
+  }
+  return fallback;
+}
+
 type MusicSource = 'wy' | 'tx' | 'kw' | 'kg' | 'mg';
 type MusicQuality = '128k' | '320k' | 'flac' | 'flac24bit';
 
@@ -1164,7 +1173,7 @@ export default function MusicPage() {
           } else {
             const data = await response.json();
             setToast({
-              message: data.error || '删除失败',
+              message: getApiErrorMessage(data.error, '删除失败'),
               type: 'error',
               onClose: () => setToast(null),
             });
@@ -1217,7 +1226,7 @@ export default function MusicPage() {
           } else {
             const data = await response.json();
             setToast({
-              message: data.error || '移除失败',
+              message: getApiErrorMessage(data.error, '移除失败'),
               type: 'error',
               onClose: () => setToast(null),
             });
